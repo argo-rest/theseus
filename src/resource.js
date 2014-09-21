@@ -27,7 +27,17 @@ function isDefined(value) {
   return typeof value !== 'undefined';
 }
 
+function isEntity(response) {
+  // FIXME: better heuristic! test class, based on response header?
+  return 'data' in response || 'links' in response;
+}
 
+function ensureEntity(response) {
+  if (! isEntity(response)) {
+    throw new Error('expected entity response');
+  }
+  return response;
+}
 
 export class Resource {
   constructor(uri, response) {
@@ -103,15 +113,14 @@ export class Resource {
   /* == Resource content == */
 
   get data() {
-    // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
-    // returns Promise[Any] of the data?
-    return this.response.then(resp => resp.data);
+    // Return just the response if plain data, or data property if entity
+    return this.response.then(resp => isEntity(resp) ? resp.data : resp);
   }
 
   get links() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
     // returns Promise[Any] of the data?
-    return this.response.then(resp => resp.links || []);
+    return this.response.then(ensureEntity).then(resp => resp.links || []);
   }
 
 
