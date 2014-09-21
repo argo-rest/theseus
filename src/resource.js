@@ -152,7 +152,14 @@ export class Resource {
    * @return {Promise[Link]}
    */
   getLink(rel) {
-    return this.links.then(links => links.find(l => l.rel == rel));
-    // FIXME: throw error if missing link
+    return this.links.
+      then(links => links.find(l => l.rel == rel)).
+      then(link => {
+        if (! link) {
+          throw new Error('No link found for rel: ' + rel);
+        }
+        // FIXME: why do we have to return a value? see Promise/A+
+        return link;
+      });
   }
 }
