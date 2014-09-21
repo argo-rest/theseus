@@ -8,8 +8,15 @@ export class Resource {
       throw new Error('Missing required uri argument to Resource');
     }
 
+    var uriPromise;
+    if (typeof uri === 'string') {
+      uriPromise = Promise.resolve(uri);
+    } else if (typeof uri.then === 'function') {
+      uriPromise = uri;
+    }
+
     Object.defineProperty(this, 'uri', {
-      value: uri,
+      value: uriPromise,
       enumerable: true,
       writable: false
       // FIXME: configurable? enumerable?
@@ -28,12 +35,12 @@ export class Resource {
 
   get(params) {
     // FIXME: must return Resource, not Promise[Resource] - but how do we know it's a Hyper resource?
-    return new Resource(this.uri, http.get(this.uri, params));
+    return new Resource(this.uri, this.uri.then(uri => http.get(uri, params)));
     // TODO: Any -> Any|Resource recursive deserialiser
   }
   post(data)  {
-    // FIXME: must return Resource, not Promise[Resource] - but how do we know it's a Hyper resource? is it even?
-    return new Resource(this.uri, http.post(this.uri, data));
+    // FIXME: return Resource or Promise[Any|Resource]? how do we know it's a Hyper resource? is it even?
+    return new Resource(this.uri, this.uri.then(uri => http.post(uri, data)));
   }
   // put(data)   {...}
   // patch(data) {...}
@@ -63,9 +70,12 @@ export class Resource {
     // FIXME: icky?
   }
 
-  follow(rel) {
+  follow(rel, params) {
     // FIXME: return lazy Resource, not Promise[Resource] - must make uri lazy too
-    return this.getLink(rel).then(link => new Resource(link.href));
+    // return this.getLink(rel).then(link => new Resource(link.href));
+    var linkHref = this.getLink(rel).then(l => l.href);
+    return new Resource(linkHref);
+    // FIXME: propagation of errors if link missing?
   }
   getLink(rel) {
     return this.links.then(links => links.find(l => l.rel == rel));
