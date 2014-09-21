@@ -25,9 +25,7 @@ function dispatch(method, uri, params) {
   // Note: don't use reqwest's promises that are not A+-compliant
   return new Promise((resolve, reject) => {
     reqwest({
-      // FIXME: apply uri template
-      url:     uri.replace(/{.*}/, ''),
-      // url:     uri,
+      url:     uri,
       method:  method,
       data:    params,
       success: resolve,

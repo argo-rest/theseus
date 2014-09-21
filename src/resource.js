@@ -1,5 +1,7 @@
 import {Http} from './http';
 
+import uriTemplates from 'npm:uri-templates';
+
 var http = new Http;
 
 export class Resource {
@@ -73,7 +75,10 @@ export class Resource {
   follow(rel, params) {
     // FIXME: return lazy Resource, not Promise[Resource] - must make uri lazy too
     // return this.getLink(rel).then(link => new Resource(link.href));
-    var linkHref = this.getLink(rel).then(l => l.href);
+    var linkHref = this.getLink(rel).then(l => l.href).then(href => {
+      return uriTemplates(href).fillFromObject(params || {});
+    });
+    // FIXME: substitute params here or later in get? both? default bind param here, allow late binding in GET later?
     return new Resource(linkHref);
     // FIXME: propagation of errors if link missing?
   }

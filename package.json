@@ -1,7 +1,8 @@
 {
   "jspm": {
     "dependencies": {
-      "reqwest": "^1.1.2"
+      "reqwest": "^1.1.2",
+      "npm:uri-templates": "^0.1.5"
     }
   }
 }
