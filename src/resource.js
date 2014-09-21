@@ -35,6 +35,9 @@ export class Resource {
     }
   }
 
+
+  /* == HTTP methods == */
+
   get(params) {
     // FIXME: must return Resource, not Promise[Resource] - but how do we know it's a Hyper resource?
     return new Resource(this.uri, this.uri.then(uri => http.get(uri, params)));
@@ -54,6 +57,9 @@ export class Resource {
   delete() {
     return this.uri.then(uri => http.delete(uri));
   }
+
+
+  /* == Resource content == */
 
   get data() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
@@ -79,6 +85,9 @@ export class Resource {
     // FIXME: icky?
   }
 
+
+  /* == Helpers == */
+
   follow(rel, params) {
     // FIXME: return lazy Resource, not Promise[Resource] - must make uri lazy too
     // return this.getLink(rel).then(link => new Resource(link.href));
@@ -89,6 +98,7 @@ export class Resource {
     return new Resource(linkHref);
     // FIXME: propagation of errors if link missing?
   }
+
   getLink(rel) {
     return this.links.then(links => links.find(l => l.rel == rel));
     // FIXME: throw error if missing link
