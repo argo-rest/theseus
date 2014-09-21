@@ -11,9 +11,15 @@ function fillUriTemplate(params = {}) {
   };
 }
 
-function defProperty(obj, propName, value) {
+function defPropertyValue(obj, propName, value) {
   Object.defineProperty(obj, propName, {
     value: value
+  });
+}
+
+function defPropertyGetter(obj, propName, getter) {
+  Object.defineProperty(obj, propName, {
+    get: getter
   });
 }
 
@@ -30,18 +36,22 @@ export class Resource {
     }
 
     // uri may be a String or a Promise[String] - flatten to Promise[String]
-    defProperty(this, 'uri', Promise.resolve(uri));
+    defPropertyValue(this, 'uri', Promise.resolve(uri));
 
     // Optional content response promise
     if (isDefined(response)) {
       // may be data or promise -- flatten to Promise
-      defProperty(this, 'responsePromise', Promise.resolve(response));
+      defPropertyValue(this, 'responsePromise', Promise.resolve(response));
       // FIXME: NOT READABLE?
+    } else {
+      // lazy GET to fetch response
+      defPropertyGetter(this, 'responsePromise', () => this.getResponse());
     }
-    // FIXME: else read-only, not writable
-    // TODO: else lazy GET?
   }
 
+  getResponse(params = {}) {
+    return this.uri.then(uri => http.get(uri, params)).then(extractEntity);
+  }
 
   /* == HTTP methods == */
 
@@ -50,7 +60,7 @@ export class Resource {
    */
   get(params = {}) {
     // FIXME: must return Resource, not Promise[Resource] - but how do we know it's a Hyper resource?
-    var getResp = this.uri.then(uri => http.get(uri, params)).then(extractEntity);
+    var getResp = this.getResponse(params);
     return new Resource(this.uri, getResp);
   }
 
@@ -95,25 +105,13 @@ export class Resource {
   get data() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
     // returns Promise[Any] of the data?
-    if (this.hasOwnProperty('responsePromise')) {
-      return this.responsePromise.then(resp => resp.data);
-    } else {
-      // FIXME: so lazy resource must allow self-promise resolution?
-      return this.get().data;
-    }
-    // FIXME: icky?
+    return this.responsePromise.then(resp => resp.data);
   }
 
   get links() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
     // returns Promise[Any] of the data?
-    if (this.hasOwnProperty('responsePromise')) {
-      return this.responsePromise.then(resp => resp.links || []);
-    } else {
-      // FIXME: so lazy resource must allow self-promise resolution?
-      return this.get().links;
-    }
-    // FIXME: icky?
+    return this.responsePromise.then(resp => resp.links || []);
   }
 
 
