@@ -4,6 +4,10 @@ var http = new Http;
 
 export class Resource {
   constructor(uri, responsePromise) {
+    if (! uri) {
+      throw new Error('Missing required uri argument to Resource');
+    }
+
     Object.defineProperty(this, 'uri', {
       value: uri,
       enumerable: true,
