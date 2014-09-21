@@ -20,6 +20,7 @@ export class Resource {
     Object.defineProperty(this, 'uri', {
       value: uriPromise,
       enumerable: true,
+      configurable: false,
       writable: false
       // FIXME: configurable? enumerable?
     });
@@ -28,11 +29,14 @@ export class Resource {
     if (typeof responsePromise !== 'undefined') {
       Object.defineProperty(this, 'responsePromise', {
         value: responsePromise,
+        enumerable: false,
+        configurable: false,
         writable: false
         // FIXME: NOT READABLE? configurable? enumerable?
       });
       // FIXME: read-only
     }
+    // TODO: else lazy GET?
   }
 
 
@@ -103,8 +107,4 @@ export class Resource {
     return this.links.then(links => links.find(l => l.rel == rel));
     // FIXME: throw error if missing link
   }
-
-  // toString() {
-  //   return 'Resource(', this.uri, ')';
-  // }
 }
