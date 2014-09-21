@@ -40,10 +40,16 @@ function ensureEntity(response) {
 }
 
 export class Resource {
+
+  /**
+   * @param {String|Promise[String]} uri The URI for this resource
+   * @param {Any|Promise[Any]} response The response when querying this resource
+   */
   constructor(uri, response) {
     if (! uri) {
       throw new Error('Missing required uri argument to Resource');
     }
+    // TODO: check is String or Promise
 
     // uri may be a String or a Promise[String] - flatten to Promise[String]
     defPropertyValue(this, 'uri', Promise.resolve(uri));
@@ -52,11 +58,12 @@ export class Resource {
     if (isDefined(response)) {
       // may be data or promise -- flatten to Promise
       defPropertyValue(this, 'response', Promise.resolve(response));
-      // FIXME: NOT READABLE?
     } else {
       // lazy GET to fetch response
+      // TODO: memoize?
       defPropertyGetter(this, 'response', () => this.getResponse());
     }
+    // FIXME: make private?
   }
 
   getResponse(params = {}) {
@@ -69,7 +76,6 @@ export class Resource {
    * @return {Resource}
    */
   get(params = {}) {
-    // FIXME: must return Resource, not Promise[Resource] - but how do we know it's a Hyper resource?
     var getResp = this.getResponse(params);
     return new Resource(this.uri, getResp);
   }
@@ -112,11 +118,17 @@ export class Resource {
 
   /* == Resource content == */
 
+  /**
+   * @return {Promise[Entity|Any]}
+   */
   get data() {
     // Return just the response if plain data, or data property if entity
     return this.response.then(resp => isEntity(resp) ? resp.data : resp);
   }
 
+  /**
+   * @return {Promise[Array[Link]]}
+   */
   get links() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
     // returns Promise[Any] of the data?
@@ -126,6 +138,9 @@ export class Resource {
 
   /* == Helpers == */
 
+  /**
+   * @return {Resource}
+   */
   follow(rel, params = {}) {
     var linkHref = this.getLink(rel).then(l => l.href).then(fillUriTemplate(params));
     // FIXME: substitute params here or later in get? both? default bind param here, allow late binding in GET later?
@@ -133,6 +148,9 @@ export class Resource {
     // FIXME: propagation of errors if link missing?
   }
 
+  /**
+   * @return {Promise[Link]}
+   */
   getLink(rel) {
     return this.links.then(links => links.find(l => l.rel == rel));
     // FIXME: throw error if missing link
