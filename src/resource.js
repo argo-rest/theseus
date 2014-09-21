@@ -4,25 +4,27 @@ import uriTemplates from 'npm:uri-templates';
 
 var http = new Http;
 
+function fillUriTemplate(params) {
+  return function(uri) {
+    return uriTemplates(uri).fillFromObject(params || {});
+  };
+}
+
+
+
 export class Resource {
   constructor(uri, responsePromise) {
     if (! uri) {
       throw new Error('Missing required uri argument to Resource');
     }
 
-    var uriPromise;
-    if (typeof uri === 'string') {
-      uriPromise = Promise.resolve(uri);
-    } else if (typeof uri.then === 'function') {
-      uriPromise = uri;
-    }
-
+    // uri may be a String or a Promise[String] - flatten to Promise[String]
+    var uriPromise = Promise.resolve(uri);
     Object.defineProperty(this, 'uri', {
       value: uriPromise,
       enumerable: true,
       configurable: false,
       writable: false
-      // FIXME: configurable? enumerable?
     });
 
     // Optional content response promise
@@ -32,7 +34,7 @@ export class Resource {
         enumerable: false,
         configurable: false,
         writable: false
-        // FIXME: NOT READABLE? configurable? enumerable?
+        // FIXME: NOT READABLE?
       });
       // FIXME: read-only
     }
@@ -93,11 +95,7 @@ export class Resource {
   /* == Helpers == */
 
   follow(rel, params) {
-    // FIXME: return lazy Resource, not Promise[Resource] - must make uri lazy too
-    // return this.getLink(rel).then(link => new Resource(link.href));
-    var linkHref = this.getLink(rel).then(l => l.href).then(href => {
-      return uriTemplates(href).fillFromObject(params || {});
-    });
+    var linkHref = this.getLink(rel).then(l => l.href).then(fillUriTemplate(params));
     // FIXME: substitute params here or later in get? both? default bind param here, allow late binding in GET later?
     return new Resource(linkHref);
     // FIXME: propagation of errors if link missing?
