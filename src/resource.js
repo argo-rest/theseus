@@ -41,11 +41,11 @@ export class Resource {
     // Optional content response promise
     if (isDefined(response)) {
       // may be data or promise -- flatten to Promise
-      defPropertyValue(this, 'responsePromise', Promise.resolve(response));
+      defPropertyValue(this, 'response', Promise.resolve(response));
       // FIXME: NOT READABLE?
     } else {
       // lazy GET to fetch response
-      defPropertyGetter(this, 'responsePromise', () => this.getResponse());
+      defPropertyGetter(this, 'response', () => this.getResponse());
     }
   }
 
@@ -105,13 +105,13 @@ export class Resource {
   get data() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
     // returns Promise[Any] of the data?
-    return this.responsePromise.then(resp => resp.data);
+    return this.response.then(resp => resp.data);
   }
 
   get links() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
     // returns Promise[Any] of the data?
-    return this.responsePromise.then(resp => resp.links || []);
+    return this.response.then(resp => resp.links || []);
   }
 
 
