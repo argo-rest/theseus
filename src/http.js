@@ -44,12 +44,15 @@ export class Http {
   }
 
   put(uri, data) {
+    return dispatch('put', uri, data);
   }
 
   patch(uri, data) {
+    return dispatch('patch', uri, data);
   }
 
   delete(uri) {
+    return dispatch('delete', uri);
   }
 }
 

@@ -44,9 +44,16 @@ export class Resource {
     // FIXME: return Resource or Promise[Any|Resource]? how do we know it's a Hyper resource? is it even?
     return new Resource(this.uri, this.uri.then(uri => http.post(uri, data)));
   }
-  // put(data)   {...}
+  put(data) {
+    var putResp = this.uri.then(uri => http.put(uri, data));
+    // FIXME: Content of returned Resource is either the server response to
+    // the PUT or, if none, the current response with the new data?
+    return new Resource(this.uri, putResp.then(resp => resp /* or current... */));
+  }
   // patch(data) {...}
-  // delete()    {...}
+  delete() {
+    return this.uri.then(uri => http.delete(uri));
+  }
 
   get data() {
     // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
