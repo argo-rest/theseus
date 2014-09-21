@@ -1,0 +1,7 @@
+{
+  "jspm": {
+    "dependencies": {
+      "reqwest": "^1.1.2"
+    }
+  }
+}

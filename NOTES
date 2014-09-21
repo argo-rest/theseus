@@ -1,0 +1,60 @@
+Monad abstraction for Hypermedia resources
+
+- flatMap?
+- Reference (uri) vs Resource (incl data)?
+  or Reference just the lazy, unfetched version of Resource?
+
+
+So resource.get() needs to return a Resource, or eventual Resource.
+Resource is a container, doesn't expose data() sync, the same way a
+Promise has no get().
+
+- post returns a Resource? not always?
+
+No mutation of resource objects
+
+
+Sample uses:
+
+[Argonaut]
+
+var res = new Resource('/')
+res.get().then(function(resp) {
+  console.log(resp.data)
+  console.log(res.data)
+});
+
+var res = new Resource('/');
+res.get().then(function(res) {
+  return res.follow('articles').get();
+}).then(function(articlesRes) {
+  console.log(articlesRes.data);
+});
+
+var res = new Resource('/');
+res.get().then(function(res) {
+  return res.follow('articles');
+}).then(function(articlesRes) {
+  return articles.post({title: 'yay'});
+}).then(function(createdResp) {
+  console.log(createdResp.data);
+});
+
+
+
+[Hyper-monad]
+
+var res = new Resource('/')
+res.getData().then(function(data) {
+  console.log(data)
+});
+
+var res = new Resource('/');
+res.follow('articles').getData().then(function(data) {
+  console.log(data);
+});
+
+var res = new Resource('/');
+res.follow('articles').post({title: 'yay'}).then(function(resp) {
+  console.log(resp);
+});
