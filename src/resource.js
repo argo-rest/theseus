@@ -1,4 +1,5 @@
 import {Http} from './http';
+import {extractEntity} from './extractor';
 
 import uriTemplates from 'npm:uri-templates';
 
@@ -49,30 +50,43 @@ export class Resource {
    */
   get(params = {}) {
     // FIXME: must return Resource, not Promise[Resource] - but how do we know it's a Hyper resource?
-    return new Resource(this.uri, this.uri.then(uri => http.get(uri, params)));
-    // TODO: Any -> Any|Resource recursive deserialiser
+    var getResp = this.uri.then(uri => http.get(uri, params)).then(extractEntity);
+    return new Resource(this.uri, getResp);
   }
 
   /**
    * @return {Promise[Any]}
    */
-  post(data)  {
-    // FIXME: return Resource or Promise[Any|Resource]? how do we know it's a Hyper resource? is it even?
-    return new Resource(this.uri, this.uri.then(uri => http.post(uri, data)));
+  post(data) {
+    // TODO: extract top-level Resource in response if any
+    return this.uri.then(uri => http.post(uri, data)).then(extractEntity);
   }
 
   /**
    * @return {Resource}
    */
   put(data) {
-    var putResp = this.uri.then(uri => http.put(uri, data));
+    var putResp = this.uri.then(uri => http.put(uri, data)).then(extractEntity);
     // FIXME: Content of returned Resource is either the server response to
     // the PUT or, if none, the current response with the new data?
     return new Resource(this.uri, putResp.then(resp => resp /* or current... */));
   }
-  // patch(data) {...}
+
+  /**
+   * @return {Resource}
+   */
+  patch(data) {
+    var patchResp = this.uri.then(uri => http.put(uri, data)).then(extractEntity);
+    // FIXME: Content of returned Resource is either the server response to
+    // the PATCH or, if none, the current response with the patch?
+    return new Resource(this.uri, patchResp.then(resp => resp /* or current... */));
+  }
+
+  /**
+   * @return {Promise[Any]}
+   */
   delete() {
-    return this.uri.then(uri => http.delete(uri));
+    return this.uri.then(uri => http.delete(uri)).then(extractEntity);
   }
 
 
