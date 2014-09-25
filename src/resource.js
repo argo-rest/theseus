@@ -123,6 +123,7 @@ export class Resource {
    */
   get data() {
     // Return just the response if plain data, or data property if entity
+    // TODO: if collection entity, store properties on data array
     return this.response.then(resp => isEntity(resp) ? resp.data : resp);
   }
 
@@ -130,8 +131,7 @@ export class Resource {
    * @return {Promise[Array[Link]]}
    */
   get links() {
-    // TODO: does get() return a Promise[Resource], Promise[Any] data, Resource?
-    // returns Promise[Any] of the data?
+    // The response must be an entity
     return this.response.then(ensureEntity).then(resp => resp.links || []);
   }
 
