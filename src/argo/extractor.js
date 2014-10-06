@@ -1,44 +1,31 @@
-/*
-if (acceptHeader === hyperMediaType) {
-  response.data = extractEntity(response.data);
-  // TODO: but the resource itself is not a hyper?
-}
-*/
-
 import {Resource} from './resource';
+import {isArray, isObject} from './util';
 
 
-function isArray(obj) {
-  return obj instanceof Array;
-}
 
-function isObject(obj) {
-  return obj instanceof Object;
-}
-
-
-function parseResponse(response, isEmbedded) {
+function parseResponse(response, isEmbedded, config) {
   if (isEmbedded) {
     if (response && response.uri) {
       if (response.data) {
-        response.data = parseData(response.data);
+        response.data = parseData(response.data, config);
         // FIXME: don't mutate please
       }
 
-      return new Resource(response.uri, response);
+// FIXME: hack, pass in config
+      return new Resource(response.uri, config, response);
     } else {
-      return parseData(response);
+      return parseData(response, config);
     }
   } else {
     if (response && response.data) {
-      response.data = parseData(response.data);
+      response.data = parseData(response.data, config);
       // FIXME: don't mutate please
     }
     return response;
   }
 }
 
-function parseData(responseData) {
+function parseData(responseData, config) {
   var data;
 
   switch (typeof responseData) {
@@ -47,7 +34,7 @@ function parseData(responseData) {
     if (isArray(responseData)) {
       // TODO: IE8-friendly map?
       data = responseData.map(function(item) {
-        return parseResponse(item, true);
+        return parseResponse(item, true, config);
       });
       break;
 
@@ -55,7 +42,7 @@ function parseData(responseData) {
     } else if (isObject(responseData)) {
       data = {};
       for (var key in responseData) {
-        data[key] = parseResponse(responseData[key], true);
+        data[key] = parseResponse(responseData[key], true, config);
       }
       break;
 
@@ -78,6 +65,6 @@ function parseData(responseData) {
 }
 
 
-export function extractEntity(response) {
-  return parseResponse(response);
+export function extractEntity(response, config) {
+  return parseResponse(response, false, config);
 }
