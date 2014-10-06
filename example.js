@@ -1,5 +1,4 @@
-// import {Resource} from './src/argo/resource';
-import {Client} from './src/argo/client';
+import {Client} from './src/argo';
 import {Http} from './src/http/reqwest';
 //import {Http} from './src/http/jquery';
 
