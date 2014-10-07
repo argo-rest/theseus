@@ -1,4 +1,10 @@
 {
+  "name": "monadic-hypermedia",
+  "version": "0.1.0",
+  "description": "Monadic JavaScript client for argo Hypermedia APIs",
+  "keywords": ["hypermedia", "api", "client", "argo"],
+  "homepage": "https://github.com/theefer/monadic-hypermedia",
+  "main": "src/argo.js",
   "jspm": {
     "dependencies": {
       "reqwest": "^1.1.2",
