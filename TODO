@@ -1,0 +1,18 @@
+* Demo server to interact with
+
+* Use response headers to detect entity vs data
+* Entity vs Resource?
+* Inline sub-resources (e.g. collection): data is lazy?
+* Follow redirections automatically. Location header?
+
+* Promise adapter layer? (ES6 Promise, angular $q, etc)
+
+* Error handling and propagation
+* Tests
+* Interact (GET, POST, follow) with non-argo resources
+* Collections handling?
+
+
+Maybes:
+* Actions
+* Full laziness (no request until requesting data)?
