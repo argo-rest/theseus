@@ -1,5 +1,4 @@
-import reqwest from 'reqwest';
-
+import $ from 'jquery';
 
 function getHeaders(request) {
   return {
@@ -10,29 +9,30 @@ function getHeaders(request) {
 }
 
 function dispatch(method, uri, data) {
-  // Note: don't use reqwest's promises that are not A+-compliant
+  // Note: don't use jQuery Deferreds that are not A+-compliant
   return new Promise((resolve, reject) => {
-    var req = reqwest({
-      url:     uri,
-      method:  method,
-      type:    'json',
-      data:    data,
+    var req = $.ajax({
+      url:      uri,
+      method:   method,
+      dataType: 'json',
+      data:     data,
       // FIXME: not for GET though?
       // FIXME: or argo?
       contentType: 'application/json',
       headers: {
         'Accept': 'application/vnd.argo+json'
       },
-// TODO: optional:
-      crossOrigin: true,
-      //withCredentials: true,
-      success: (body) => resolve({uri: uri, body: body, status: req.status, headers: getHeaders(req.request)}),
+      // TODO: optional:
+      // xhrFields: {
+      //   withCredentials: true
+      // }
+      // TODO: return status code
+      success: (body, status, request) => resolve({uri: uri, body: body, status: status, headers: getHeaders(request)}),
       // FIXME: parse response iff json content-type
-      error:   ()     => reject( {uri: uri, body: req.request.response, status: req.status, headers: getHeaders(req.request)})
+      error:   (request, status) => reject( {uri: uri, body: request.responseText, status: status, headers: getHeaders(request)})
     });
   });
 }
-
 
 export class Http {
 
