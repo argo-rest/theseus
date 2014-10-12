@@ -22,11 +22,10 @@ function dispatch(method, uri, data) {
       headers: {
         'Accept': 'application/vnd.argo+json'
       },
-      // TODO: optional:
-      // xhrFields: {
-      //   withCredentials: true
-      // }
-      // TODO: return status code
+      // TODO: optional?
+      xhrFields: {
+        withCredentials: true
+      },
       success: (body, status, request) => resolve({uri: uri, body: body, status: status, headers: getHeaders(request)}),
       // FIXME: parse response iff json content-type
       error:   (request, status) => reject( {uri: uri, body: request.responseText, status: status, headers: getHeaders(request)})

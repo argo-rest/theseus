@@ -21,6 +21,7 @@ function dispatch(method, uri, data) {
       // FIXME: or argo?
       contentType: 'application/json',
       headers: {
+        // FIXME: should be passed in as argument to make adapter more generic
         'Accept': 'application/vnd.argo+json'
       },
 // TODO: optional:
