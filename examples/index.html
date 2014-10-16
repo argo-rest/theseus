@@ -4,7 +4,8 @@
   <script src="../jspm_packages/system@0.8.js"></script>
   <script src="../config.js"></script>
   <script>
-    System.import("./example").catch(function(e) {
+    System.baseURL = "/";
+    System.import("../examples/example").catch(function(e) {
       setTimeout(function(){ throw e });
     });
   </script>
