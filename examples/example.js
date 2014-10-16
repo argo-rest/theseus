@@ -1,4 +1,4 @@
-import {Client} from '../src/argo';
+import {Client} from '../src/theseus';
 import {Http} from '../src/http/reqwest';
 //import {Http} from './src/http/jquery';
 
