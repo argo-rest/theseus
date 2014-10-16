@@ -1,4 +1,6 @@
-# Experimental monadic argo client
+# Theseus
+
+A JavaScript client library for argo Hypermedia APIs.
 
 *Under development*
 
