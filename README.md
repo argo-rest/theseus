@@ -11,7 +11,7 @@ See NOTES file for underlying ideas.
 
 Sample usage:
 
-```
+``` javascript
 import {Client} from 'theseus';
 import {Http} from 'theseus/src/http/reqwest';
 
