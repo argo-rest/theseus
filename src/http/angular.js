@@ -4,7 +4,12 @@ export var mod = angular.module('anyHttp', []);
 
 
 function mapResponseFor(uri) {
-  return function({data, status, headers}) {
+  return function({data, status, headers: getHeader}) {
+    var headers = {
+      'Location':     getHeader('Location'),
+      'Content-Type': getHeader('Content-Type')
+    };
+
     return {uri: uri, body: data, status: status, headers: headers};
   };
 }
