@@ -1,8 +1,9 @@
 import {Client} from '../src/theseus';
 import {Http} from '../src/http/reqwest';
 //import {Http} from './src/http/jquery';
+import {Promise} from '../src/promise/es6';
 
-var client = new Client({http: new Http});
+var client = new Client({http: new Http, promise: Promise});
 
 var print = (...args) => console.log(...args);
 

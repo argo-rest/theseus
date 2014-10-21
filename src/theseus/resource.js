@@ -52,7 +52,7 @@ export class Resource {
     // TODO: check is String or Promise
 
     // uri may be a String or a Promise[String] - flatten to Promise[String]
-    defPropertyValue(this, 'uri', Promise.resolve(uri));
+    defPropertyValue(this, 'uri', config.promise.resolve(uri));
 
 
     if (! config.http) {
@@ -65,7 +65,7 @@ export class Resource {
     // Optional content response promise
     if (isDefined(response)) {
       // may be data or promise -- flatten to Promise
-      defPropertyValue(this, 'response', Promise.resolve(response));
+      defPropertyValue(this, 'response', config.promise.resolve(response));
     } else {
       // lazy GET to fetch response
       defPropertyLazyValue(this, 'response', () => this.getResponse());

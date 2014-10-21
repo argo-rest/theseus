@@ -4,7 +4,10 @@ import {defPropertyValue} from './util';
 
 export class Client {
   constructor(adapters) {
-    defPropertyValue(this, 'resourceOptions', {http: adapters.http});
+    defPropertyValue(this, 'resourceOptions', {
+      http:    adapters.http,
+      promise: adapters.promise
+    });
   }
 
   resource(uri) {
