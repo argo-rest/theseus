@@ -14,7 +14,7 @@ function mapResponseFor(uri) {
   };
 }
 
-mod.factory('dispatch', ['$http', function($http) {
+mod.factory('dispatch', ['$http', '$q', function($http, $q) {
   return function(method, uri, extraParams = {}) {
     var mapResponse = mapResponseFor(uri);
 
