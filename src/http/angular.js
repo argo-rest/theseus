@@ -18,25 +18,27 @@ mod.factory('dispatch', ['$http', function($http) {
   return function(method, uri, extraParams = {}) {
     var mapResponse = mapResponseFor(uri);
 
-    // FIXME: which promise? Promise or $q?
-    return new Promise((resolve, reject) => {
-      var req = $http(angular.extend({
-        url:     uri,
-        method:  method,
-        headers: {
-          // FIXME: should be passed in as argument to make adapter more generic
-          'Accept':       'application/vnd.argo+json',
-          // FIXME: not for GET though? iff data?
-          // FIXME: or argo?
-          'Content-Type': 'application/json'
-        },
-        // TODO: optional:
-        withCredentials: true
-      }, extraParams)).then(
-        r => resolve(mapResponse(r)),
-        r => reject(mapResponse(r))
-      );
-    });
+    // TODO: return a Promise from the promise adapter
+    var defer = $q.defer();
+
+    var req = $http(angular.extend({
+      url:     uri,
+      method:  method,
+      headers: {
+        // FIXME: should be passed in as argument to make adapter more generic
+        'Accept':       'application/vnd.argo+json',
+        // FIXME: not for GET though? iff data?
+        // FIXME: or argo?
+        'Content-Type': 'application/json'
+      },
+      // TODO: optional:
+      withCredentials: true
+    }, extraParams)).then(
+      r => defer.resolve(mapResponse(r)),
+      r => defer.reject(mapResponse(r))
+    );
+
+    return defer.promise;
   };
 }]);
 
