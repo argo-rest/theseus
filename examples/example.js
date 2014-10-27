@@ -7,32 +7,33 @@ var client = new Client({http: new Http, promise: Promise});
 
 var print = (...args) => console.log(...args);
 
+// FIXME: make it return the correct media-type
 var resource = client.resource('...'); // <- point to tag api
 console.log(resource);
 console.log(resource.get());
-resource.data.then(data => console.log(data), err => console.error(err.stack));
-resource.follow('tags', {query: 'victorian'}).data.then(print);
-resource.follow('tags').get({query: 'victorian'}).data.then(print);
+resource.getData().then(data => console.log(data), err => console.error(err.stack));
+resource.follow('tags', {query: 'victorian'}).getData().then(print);
+resource.follow('tags').get({query: 'victorian'}).getData().then(print);
 
-// resource.follow('missing').data.then(data => console.log(data), err => console.error(err.stack));
+// resource.follow('missing').getData().then(data => console.log(data), err => console.error(err.stack));
 
 
 var res = client.resource('http://localhost:8000/');
-res.data.then(print);
-res.links.then(print);
-res.follow('books').data.then(print);
-res.follow('books').follow('next').data.then(print);
+res.getData().then(print);
+res.getLinks().then(print, console.error.bind(console));
+res.follow('books').getData().then(print).catch(console.error.bind(console));
+res.follow('books').follow('next').getData().then(print);
 res.follow('books').post({title: 'Nova', author: 'Samuel L. Delany'}).then(print);
 
 var book = res.follow('books').post({title: 'Glasshouse', author: 'Charles Stross'});
 book.then((r) => {
   r.uri.then(print);
-  r.data.then(print);
-  r.get().data.then(x => print("GET", x)).
+  r.getData().then(print);
+  r.get().then(x => print("GET", x)).
     then(() => {
       return r.delete();
     }).then(() => {
-      r.get().data.then(x => print("GET again", x), e => print("book is gone", e));
+      r.get().then(x => print("GET again", x), e => print("book is gone", e));
     });
 });
 
@@ -43,11 +44,11 @@ function* foo() {
 
   var book = yield res.follow('books').post({title: 'Glasshouse', author: 'Charles Stross'});
   print(yield book.uri);
-  var data = yield book.data;
+  var data = yield book.getData();
   print(data);
   yield timeout(1000);
 
-  var bookData = yield book.get().data;
+  var bookData = yield book.get();
   print("GET", bookData);
    // yield book.delete();
 //  r.get().data.then(x => print("GET again", x));
