@@ -119,6 +119,7 @@ export class Resource {
    * @return {Resource}
    */
   put(data) {
+    // FIXME: why not parseResponse?
     var putResp = this.uri.then(uri => this.http.put(uri, data)).then(extractEntity);
     // FIXME: Content of returned Resource is either the server response to
     // the PUT or, if none, the current response with the new data?
@@ -129,6 +130,7 @@ export class Resource {
    * @return {Resource}
    */
   patch(data) {
+    // FIXME: why not parseResponse?
     var patchResp = this.uri.then(uri => this.http.patch(uri, data)).then(extractEntity);
     // FIXME: Content of returned Resource is either the server response to
     // the PATCH or, if none, the current response with the patch?
