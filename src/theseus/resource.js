@@ -19,6 +19,15 @@ function isEntity(response) {
   return 'data' in response || 'links' in response;
 }
 
+// FIXME: better heuristic, or helper on Promise adapter?
+function isPromise(obj) {
+  return 'then' in obj;
+}
+
+function extractData(response) {
+  return isEntity(response) ? response.data : response;
+}
+
 function ensureEntity(response) {
   if (! isEntity(response)) {
     throw new Error('expected entity response');
@@ -66,6 +75,16 @@ export class Resource {
     if (isDefined(response)) {
       // may be data or promise -- flatten to Promise
       defPropertyValue(this, 'response', config.promise.resolve(response));
+
+      // if data is loaded, expose it on the Resource
+      if (! isPromise(response)) {
+        if (isEntity(response)) {
+          if (response.data)  { defPropertyValue(this, 'data',  response.data);  }
+          if (response.links) { defPropertyValue(this, 'links', response.links); }
+        } else {
+          defPropertyValue(this, 'data', response);
+        }
+      }
     } else {
       // lazy GET to fetch response
       defPropertyLazyValue(this, 'response', () => this.getResponse());
@@ -129,16 +148,16 @@ export class Resource {
   /**
    * @return {Promise[Entity|Any]}
    */
-  get data() {
+  getData() {
     // Return just the response if plain data, or data property if entity
     // TODO: if collection entity, store properties on data array
-    return this.response.then(resp => isEntity(resp) ? resp.data : resp);
+    return this.response.then(extractData);
   }
 
   /**
    * @return {Promise[Array[Link]]}
    */
-  get links() {
+  getLinks() {
     // The response must be an entity
     return this.response.then(ensureEntity).then(resp => resp.links || []);
   }
@@ -160,7 +179,7 @@ export class Resource {
    * @return {Promise[Link]}
    */
   getLink(rel) {
-    return this.links.
+    return this.getLinks().
       then(links => links.find(l => l.rel == rel)).
       then(link => {
         if (! link) {
