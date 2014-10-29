@@ -1,12 +1,31 @@
 import {Resource} from './resource';
-import {isArray, isObject} from './util';
+import {isArray, isObject, isDefined} from './util';
 
 
+function contains(arr, item) {
+  return arr.indexOf(item) !== -1;
+}
+
+function isEntity(obj, isEmbedded) {
+  var hasRequiredProps;
+  if (isEmbedded) {
+    hasRequiredProps = 'uri' in obj;
+  } else {
+    // FIXME: required for response entities?
+    hasRequiredProps = 'data' in obj;
+  }
+
+  var keys = Object.keys(obj);
+  var entityProperties = ['uri', 'data', 'links'];
+  var hasOnlyEntityProps = keys.every(key => contains(entityProperties, key));
+
+  return hasRequiredProps && hasOnlyEntityProps;
+}
 
 function parseResponse(response, isEmbedded, config) {
   if (isEmbedded) {
-    if (response && response.uri) {
-      if (response.data) {
+    if (response && isEntity(response, isEmbedded)) {
+      if (isDefined(response.data)) {
         response.data = parseData(response.data, config);
         // FIXME: don't mutate please
       }
@@ -17,7 +36,7 @@ function parseResponse(response, isEmbedded, config) {
       return parseData(response, config);
     }
   } else {
-    if (response && response.data) {
+    if (response && isEntity(response, isEmbedded) && isDefined(response.data)) {
       response.data = parseData(response.data, config);
       // FIXME: don't mutate please
     }
