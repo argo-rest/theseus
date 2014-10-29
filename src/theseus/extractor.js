@@ -7,6 +7,11 @@ function contains(arr, item) {
 }
 
 function isEntity(obj, isEmbedded) {
+  // FIXME: avoid early returns
+  if (! isObject(obj)) {
+    return false;
+  }
+
   var hasRequiredProps;
   if (isEmbedded) {
     hasRequiredProps = 'uri' in obj;
