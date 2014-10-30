@@ -92,9 +92,11 @@ export class Resource {
     // FIXME: make private?
   }
 
-  getResponse(params = {}) {
+  getResponse(params = {}, implemOptions) {
     // FIXME: parse error response too
-    return this.uri.then(uri => this.http.get(uri, params)).then(parseResponse(this.config));
+    return this.uri.
+      then(uri => this.http.get(uri, params, implemOptions)).
+      then(parseResponse(this.config));
   }
 
 
@@ -103,24 +105,26 @@ export class Resource {
   /**
    * @return {Resource}
    */
-  get(params = {}) {
-    var getResp = this.getResponse(params);
+  get(params = {}, implemOptions) {
+    var getResp = this.getResponse(params, implemOptions);
     return new Resource(this.uri, this.config, getResp);
   }
 
   /**
    * @return {Promise[Any|Resource]}
    */
-  post(data) {
-    return this.uri.then(uri => this.http.post(uri, data)).then(parseResponse(this.config));
+  post(data, implemOptions) {
+    return this.uri.
+      then(uri => this.http.post(uri, data, implemOptions)).
+      then(parseResponse(this.config));
   }
 
   /**
    * @return {Resource}
    */
-  put(data) {
+  put(data, implemOptions) {
     // FIXME: why not parseResponse?
-    var putResp = this.uri.then(uri => this.http.put(uri, data)).then(extractEntity);
+    var putResp = this.uri.then(uri => this.http.put(uri, data, implemOptions)).then(extractEntity);
     // FIXME: Content of returned Resource is either the server response to
     // the PUT or, if none, the current response with the new data?
     return new Resource(this.uri, this.config, putResp.then(resp => resp /* or current... */));
@@ -129,9 +133,9 @@ export class Resource {
   /**
    * @return {Resource}
    */
-  patch(data) {
+  patch(data, implemOptions) {
     // FIXME: why not parseResponse?
-    var patchResp = this.uri.then(uri => this.http.patch(uri, data)).then(extractEntity);
+    var patchResp = this.uri.then(uri => this.http.patch(uri, data, implemOptions)).then(extractEntity);
     // FIXME: Content of returned Resource is either the server response to
     // the PATCH or, if none, the current response with the patch?
     return new Resource(this.uri, this.config, patchResp.then(resp => resp /* or current... */));
@@ -140,8 +144,8 @@ export class Resource {
   /**
    * @return {Promise[Any|Resource]}
    */
-  delete() {
-    return this.uri.then(uri => this.http.delete(uri)).then(parseResponse(this.config));
+  delete(implemOptions) {
+    return this.uri.then(uri => this.http.delete(uri, implemOptions)).then(parseResponse(this.config));
   }
 
 

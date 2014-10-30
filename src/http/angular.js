@@ -1,5 +1,8 @@
 import angular from 'angular';
 
+// Utility aliases
+var {extend} = angular;
+
 export var mod = angular.module('anyHttp', []);
 
 
@@ -21,7 +24,7 @@ mod.factory('dispatch', ['$http', '$q', function($http, $q) {
     // TODO: return a Promise from the promise adapter
     var defer = $q.defer();
 
-    var req = $http(angular.extend({
+    var req = $http(extend({
       url:     uri,
       method:  method,
       headers: {
@@ -45,24 +48,24 @@ mod.factory('dispatch', ['$http', '$q', function($http, $q) {
 
 mod.factory('http', ['dispatch', function(dispatch) {
   return {
-    get(uri, params) {
-      return dispatch('get', uri, {params: params});
+    get(uri, params, implemOptions) {
+      return dispatch('get', uri, extend({}, implemOptions, {params: params}));
     },
 
-    post(uri, data) {
-      return dispatch('post', uri, {data: data});
+    post(uri, data, implemOptions) {
+      return dispatch('post', uri, extend({}, implemOptions, {data: data}));
     },
 
-    put(uri, data) {
-      return dispatch('put', uri, {data: data});
+    put(uri, data, implemOptions) {
+      return dispatch('put', uri, extend({}, implemOptions, {data: data}));
     },
 
-    patch(uri, data) {
-      return dispatch('patch', uri, {data: data});
+    patch(uri, data, implemOptions) {
+      return dispatch('patch', uri, extend({}, implemOptions, {data: data}));
     },
 
-    delete(uri) {
-      return dispatch('delete', uri);
+    delete(uri, implemOptions) {
+      return dispatch('delete', uri, implemOptions);
     }
   };
 }]);
