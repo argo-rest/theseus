@@ -1,7 +1,7 @@
 import {extractEntity} from './extractor';
 import {isDefined, defPropertyValue, defPropertyLazyValue} from './util';
 
-import uriTemplates from 'npm:uri-templates';
+import uriTemplates from 'uri-templates';
 
 
 var CONTENT_TYPE_ARGO = 'application/vnd.argo+json';
