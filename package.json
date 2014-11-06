@@ -18,5 +18,8 @@
       "reqwest": "^1.1.2",
       "uri-templates": "npm:uri-templates@^0.1.5"
     }
+  },
+  "dependencies": {
+    "uri-templates": "^0.1.5"
   }
 }
