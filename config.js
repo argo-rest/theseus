@@ -9,8 +9,8 @@ System.config({
 System.config({
   "map": {
     "jquery": "github:components/jquery@^2.1.1",
-    "npm:uri-templates": "npm:uri-templates@^0.1.5",
     "reqwest": "github:ded/reqwest@^1.1.2",
+    "uri-templates": "npm:uri-templates@^0.1.5",
     "github:jspm/nodelibs@0.0.5": {
       "json": "github:systemjs/plugin-json@master"
     },
@@ -20,7 +20,7 @@ System.config({
     "npm:inherits@2.0.1": {},
     "npm:json@9.0.2": {},
     "npm:uri-templates@0.1.5": {
-      "json": "github:systemjs/plugin-json@master"
+      "json": "npm:json@^9.0.2"
     }
   }
 });

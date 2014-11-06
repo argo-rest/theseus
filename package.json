@@ -15,8 +15,8 @@
     "main": "src/theseus.js",
     "dependencies": {
       "jquery": "^2.1.1",
-      "npm:uri-templates": "^0.1.5",
-      "reqwest": "^1.1.2"
+      "reqwest": "^1.1.2",
+      "uri-templates": "npm:uri-templates@^0.1.5"
     }
   }
 }
