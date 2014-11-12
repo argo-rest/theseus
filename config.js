@@ -9,9 +9,9 @@ System.config({
 System.config({
   "map": {
     "reqwest": "github:ded/reqwest@^1.1.2",
-    "npm:uri-templates": "npm:uri-templates@^0.1.5",
+    "uri-templates": "npm:uri-templates@^0.1.5",
     "npm:uri-templates@0.1.5": {
-      "json": "github:systemjs/plugin-json@master"
+      "json": "npm:json@^9.0.2"
     },
     "github:jspm/nodelibs@0.0.3": {
       "Base64": "npm:Base64@0.2",

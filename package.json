@@ -8,7 +8,7 @@
   "jspm": {
     "dependencies": {
       "reqwest": "^1.1.2",
-      "npm:uri-templates": "^0.1.5",
+      "uri-templates": "npm:uri-templates@^0.1.5",
       "jquery": "^2.1.1"
     }
   }
