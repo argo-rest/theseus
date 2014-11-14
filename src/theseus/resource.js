@@ -79,8 +79,15 @@ export class Resource {
       // if data is loaded, expose it on the Resource
       if (! isPromise(response)) {
         if (isEntity(response)) {
-          if (response.data)  { defPropertyValue(this, 'data',  response.data);  }
-          if (response.links) { defPropertyValue(this, 'links', response.links); }
+          if (isDefined(response.data))  { defPropertyValue(this, 'data',  response.data);  }
+          if (isDefined(response.links)) { defPropertyValue(this, 'links', response.links); }
+
+          // TODO: is this the interface we want?
+          if (Array.isArray(response.data)) {
+            if (isDefined(response.offset)) { defPropertyValue(this, 'offset', response.offset); }
+            if (isDefined(response.length)) { defPropertyValue(this, 'length', response.length); }
+            if (isDefined(response.total))  { defPropertyValue(this, 'total',  response.total);  }
+          }
         } else {
           defPropertyValue(this, 'data', response);
         }
