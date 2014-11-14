@@ -2,9 +2,16 @@
   "name": "theseus",
   "version": "0.1.0",
   "description": "JavaScript client library for argo Hypermedia APIs",
-  "keywords": ["hypermedia", "api", "client", "argo"],
+  "keywords": [
+    "hypermedia",
+    "api",
+    "client",
+    "argo"
+  ],
   "homepage": "https://github.com/argo-rest/theseus",
   "main": "src/theseus.js",
+  "author": "Sébastien Cevey <seb@cine7.net>",
+  "license": "Apache-2",
   "jspm": {
     "dependencies": {
       "reqwest": "^1.1.2",
