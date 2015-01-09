@@ -29,11 +29,12 @@ var book = res.follow('books').post({title: 'Glasshouse', author: 'Charles Stros
 book.then((r) => {
   r.uri.then(print);
   r.getData().then(print);
-  r.get().then(x => print("GET", x)).
+  r.get().response.
+    then(x => print("GET", x)).
     then(() => {
-      return r.delete();
+      return r.delete().response;
     }).then(() => {
-      r.get().then(x => print("GET again", x), e => print("book is gone", e));
+      r.get().response.then(x => print("GET again", x), e => print("book is gone", e));
     });
 });
 
