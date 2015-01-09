@@ -13,10 +13,18 @@
   "author": "Sébastien Cevey <seb@cine7.net>",
   "license": "Apache-2",
   "jspm": {
+    "directories": {
+      "lib": "src"
+    },
     "dependencies": {
+      "jquery": "^2.1.1",
       "reqwest": "^1.1.2",
-      "uri-templates": "npm:uri-templates@^0.1.5",
-      "jquery": "^2.1.1"
+      "uri-templates": "^0.1.5"
     }
+  },
+  "devDependencies": {
+    "chai": "^1.9.2",
+    "jspm": "^0.10.4",
+    "mocha": "^2.0.1"
   }
 }
