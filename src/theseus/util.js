@@ -10,6 +10,10 @@ export function isDefined(value) {
   return typeof value !== 'undefined';
 }
 
+export function isUndefined(value) {
+  return ! isDefined(value);
+}
+
 
 export function memoize(func) {
   var value;
