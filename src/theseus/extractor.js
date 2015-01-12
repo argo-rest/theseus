@@ -1,9 +1,20 @@
 import {Resource} from './resource';
-import {isArray, isObject, isDefined} from './util';
-
+import {isArray, isObject, isDefined, isUndefined} from './util';
 
 function contains(arr, item) {
   return arr.indexOf(item) !== -1;
+}
+
+
+var baseEntityProperties = ['uri', 'data', 'links'];
+var collectionEntityProperties = ['length', 'offset', 'total'];
+
+function allowedEntityProperties(entityIsCollection) {
+  if (entityIsCollection) {
+    return baseEntityProperties.concat(collectionEntityProperties);
+  } else {
+    return baseEntityProperties;
+  }
 }
 
 function isEntity(obj, isEmbedded) {
@@ -21,7 +32,10 @@ function isEntity(obj, isEmbedded) {
   }
 
   var keys = Object.keys(obj);
-  var entityProperties = ['uri', 'data', 'links'];
+
+  // If data undefined, it may or may not be a collection
+  var dataIsArray = isUndefined(obj.data) || isArray(obj.data);
+  var entityProperties = allowedEntityProperties(dataIsArray);
   var hasOnlyEntityProps = keys.every(key => contains(entityProperties, key));
 
   return hasRequiredProps && hasOnlyEntityProps;
