@@ -12,6 +12,7 @@
   "main": "src/theseus.js",
   "author": "Sébastien Cevey <seb@cine7.net>",
   "license": "Apache-2",
+  "format": "es6",
   "jspm": {
     "directories": {
       "lib": "src"
