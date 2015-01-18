@@ -1,5 +1,6 @@
 import {extractEntity} from './extractor';
 import {isDefined, defPropertyValue, defPropertyLazyValue} from './util';
+import {assertStringParam, assertPromiseParam} from './util/asserts';
 
 import uriTemplates from 'uri-templates';
 
@@ -52,13 +53,19 @@ export class Resource {
 
   /**
    * @param {String|Promise[String]} uri The URI for this resource
+   * @param {Object} config The response when querying this resource
    * @param {Any|Promise[Any]} response The response when querying this resource
    */
   constructor(uri, config, response) {
-    if (! uri) {
-      throw new Error('Missing required uri argument to Resource');
+    // FIXME: terrible code relying on exception being thrown even in
+    // valid cases (uri is a Promise); refactor using more gentle
+    // monadic composable assertions, e.g.
+    //   assertEither(assertStringParam(uri, 'uri'), assertPromiseParam(uri, 'uri')).throw;
+    try {
+      assertStringParam(uri, 'uri');
+    } catch(e) {
+      assertPromiseParam(uri, 'uri');
     }
-    // TODO: check is String or Promise
 
     // uri may be a String or a Promise[String] - flatten to Promise[String]
     defPropertyValue(this, 'uri', config.promise.resolve(uri));
