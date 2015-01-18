@@ -12,12 +12,13 @@
   "main": "src/theseus.js",
   "author": "Sébastien Cevey <seb@cine7.net>",
   "license": "Apache-2",
-  "format": "es6",
   "scripts": {
     "test": "karma start test/karma.conf.js",
     "test-setup": "jspm install"
   },
   "jspm": {
+    "registry": "jspm",
+    "format": "es6",
     "directories": {
       "lib": "src"
     },
