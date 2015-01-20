@@ -1,4 +1,4 @@
-# Theseus
+# Theseus [![Build Status](https://travis-ci.org/argo-rest/theseus.svg?branch=master)](https://travis-ci.org/argo-rest/theseus)
 
 A JavaScript client library for argo Hypermedia APIs.
 
