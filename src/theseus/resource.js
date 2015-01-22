@@ -1,5 +1,5 @@
 import {extractEntity} from './extractor';
-import {isDefined, defPropertyValue, defPropertyLazyValue} from './util';
+import {isString, isDefined, defPropertyValue, defPropertyLazyValue} from './util';
 import {assertStringParam, assertPromiseParam} from './util/asserts';
 
 import uriTemplates from 'uri-templates';
@@ -53,10 +53,10 @@ export class Resource {
 
   /**
    * @param {String|Promise[String]} uri The URI for this resource
-   * @param {Object} config The response when querying this resource
+   * @param {Object} adapters The HTTP and Promise adapters
    * @param {Any|Promise[Any]} response The response when querying this resource
    */
-  constructor(uri, config, response) {
+  constructor(uri, adapters, response) {
     // FIXME: terrible code relying on exception being thrown even in
     // valid cases (uri is a Promise); refactor using more gentle
     // monadic composable assertions, e.g.
@@ -67,21 +67,26 @@ export class Resource {
       assertPromiseParam(uri, 'uri');
     }
 
-    // uri may be a String or a Promise[String] - flatten to Promise[String]
-    defPropertyValue(this, 'uri', config.promise.resolve(uri));
 
-
-    if (! config.http) {
-      throw new Error('Missing required http adapter in config argument to Resource');
+    // TODO: assert http and promise adapters
+    if (! adapters.http) {
+      throw new Error('Missing required http adapter in adapters argument to Resource');
     }
-    defPropertyValue(this, 'config', config);
-    defPropertyValue(this, 'http', config.http);
+    defPropertyValue(this, '$adapters', adapters);
+
+    // uri may be a String or a Promise[String] - flatten to Promise[String]
+    defPropertyValue(this, '$uri', adapters.promise.resolve(uri));
+
+    // if string is loaded, expose it on the Resource
+    if (isString(uri)) {
+      defPropertyValue(this, 'uri', uri);
+    }
 
 
     // Optional content response promise
     if (isDefined(response)) {
       // may be data or promise -- flatten to Promise
-      defPropertyValue(this, 'response', config.promise.resolve(response));
+      defPropertyValue(this, '$response', adapters.promise.resolve(response));
 
       // if data is loaded, expose it on the Resource
       if (! isPromise(response)) {
@@ -101,16 +106,9 @@ export class Resource {
       }
     } else {
       // lazy GET to fetch response
-      defPropertyLazyValue(this, 'response', () => this.getResponse());
+      defPropertyLazyValue(this, '$response', () => this.get());
     }
     // FIXME: make private?
-  }
-
-  getResponse(params = {}, implemOptions) {
-    // FIXME: parse error response too
-    return this.uri.
-      then(uri => this.http.get(uri, params, implemOptions)).
-      then(parseResponse(this.config));
   }
 
 
@@ -171,7 +169,7 @@ export class Resource {
   getData() {
     // Return just the response if plain data, or data property if entity
     // TODO: if collection entity, store properties on data array
-    return this.response.then(extractData);
+    return this.$response.then(extractData);
   }
 
   /**
@@ -179,7 +177,7 @@ export class Resource {
    */
   getLinks() {
     // The response must be an entity
-    return this.response.then(ensureEntity).then(resp => resp.links || []);
+    return this.$response.then(ensureEntity).then(resp => resp.links || []);
   }
 
 
@@ -191,7 +189,7 @@ export class Resource {
   follow(rel, params = {}) {
     var linkHref = this.getLink(rel).then(l => l.href).then(fillUriTemplate(params));
     // FIXME: substitute params here or later in get? both? default bind param here, allow late binding in GET later?
-    return new Resource(linkHref, this.config);
+    return new Resource(linkHref, this.$adapters);
     // FIXME: propagation of errors if link missing?
   }
 
