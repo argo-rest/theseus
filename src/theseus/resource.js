@@ -83,6 +83,10 @@ export class Resource {
     }
 
 
+    // TODO: split into two subclasses, one for lazy resources with
+    // uri promise and no response, the other for concrete resources
+    // with uri and response data. Also argo vs plain data resources?
+
     // Optional content response promise
     if (isDefined(response)) {
       // may be data or promise -- flatten to Promise
@@ -115,49 +119,50 @@ export class Resource {
   /* == HTTP methods == */
 
   /**
-   * @return {Resource}
+   * @return {Promise[Any|Resource]}
    */
-  get(params = {}, implemOptions) {
-    var getResp = this.getResponse(params, implemOptions);
-    return new Resource(this.uri, this.config, getResp);
+  get(params = {}, implemOptions = {}) {
+    return this.$uri.
+      then(uri => this.$adapters.http.get(uri, params, implemOptions)).
+      then(parseResponse(this.$adapters));
   }
 
   /**
    * @return {Promise[Any|Resource]}
    */
-  post(data, implemOptions) {
-    return this.uri.
-      then(uri => this.http.post(uri, data, implemOptions)).
-      then(parseResponse(this.config));
+  post(data, implemOptions = {}) {
+    return this.$uri.
+      then(uri => this.$adapters.http.post(uri, data, implemOptions)).
+      then(parseResponse(this.$adapters));
   }
 
   /**
-   * @return {Resource}
+   * @return {Promise[Resource]}
    */
-  put(data, implemOptions) {
-    // FIXME: why not parseResponse?
-    var putResp = this.uri.then(uri => this.http.put(uri, data, implemOptions)).then(extractEntity);
-    // FIXME: Content of returned Resource is either the server response to
-    // the PUT or, if none, the current response with the new data?
-    return new Resource(this.uri, this.config, putResp.then(resp => resp /* or current... */));
+  put(data, implemOptions = {}) {
+    return this.$uri.
+      then(uri => this.$adapters.http.put(uri, data, implemOptions)).
+      // FIXME: if empty, use sent data, else extractEntity on response data
+      then(parseResponse(this.$adapters));
   }
 
   /**
-   * @return {Resource}
+   * @return {Promise[Resource]}
    */
-  patch(data, implemOptions) {
-    // FIXME: why not parseResponse?
-    var patchResp = this.uri.then(uri => this.http.patch(uri, data, implemOptions)).then(extractEntity);
-    // FIXME: Content of returned Resource is either the server response to
-    // the PATCH or, if none, the current response with the patch?
-    return new Resource(this.uri, this.config, patchResp.then(resp => resp /* or current... */));
+  patch(data, implemOptions = {}) {
+    var patchResp = this.$uri.
+      then(uri => this.$adapters.http.patch(uri, data, implemOptions)).
+      // FIXME: if empty, use sent data, else extractEntity on response data
+      then(parseResponse(this.$adapters));
   }
 
   /**
    * @return {Promise[Any|Resource]}
    */
-  delete(implemOptions) {
-    return this.uri.then(uri => this.http.delete(uri, implemOptions)).then(parseResponse(this.config));
+  delete(implemOptions = {}) {
+    return this.$uri.
+      then(uri => this.$adapters.http.delete(uri, implemOptions)).
+      then(parseResponse(this.$adapters));
   }
 
 
