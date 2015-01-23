@@ -24,7 +24,7 @@ resource.follow('search', {query: '42'}).data.then(data => console.log(data));
 resource.follow('items').follow('create').post({foo: 'bar'}).then(resp => console.log(resp));
 ```
 
-See the `examples` directory.
+See the [theseus-examples](https://github.com/argo-rest/theseus-examples) repository for live code.
 
 
 ## Installation
