@@ -13,9 +13,10 @@ Sample usage:
 
 ``` javascript
 import {Client} from 'theseus';
-import {Http} from 'theseus/src/http/reqwest';
+import {Http} from 'any-http-reqwest';
+import {Promise} from 'any-promise-es6';
 
-var client = new Client({http: new Http});
+var client = new Client({http: new Http, promise: Promise});
 
 var resource = client.resource('http://api.example.com'); // an API supporting argo
 resource.data.then(data => console.log(data), err => console.error(err.stack));
