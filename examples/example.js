@@ -1,5 +1,5 @@
 import {Client} from '../src/theseus';
-import {Http} from '../src/http/reqwest';
+import {Http} from 'any-http-reqwest';
 // or: import {Http} from 'any-http-jquery';
 // Problem with install 'any-promise-es6', use ES6 Promise directly instead
 //import {Promise} from 'any-promise-es6';

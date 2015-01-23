@@ -23,7 +23,6 @@
       "lib": "src"
     },
     "dependencies": {
-      "reqwest": "^1.1.2",
       "uri-templates": "^0.1.5"
     }
   },
