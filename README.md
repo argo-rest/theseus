@@ -1,6 +1,6 @@
 # Theseus [![Build Status](https://travis-ci.org/argo-rest/theseus.svg?branch=master)](https://travis-ci.org/argo-rest/theseus)
 
-A JavaScript client library for argo Hypermedia APIs.
+A JavaScript client library for [argo](https://github.com/argo-rest/spec) Hypermedia APIs.
 
 *Under development.*
 
@@ -19,9 +19,9 @@ import {Promise} from 'any-promise-es6';
 var client = new Client({http: new Http, promise: Promise});
 
 var resource = client.resource('http://api.example.com'); // an API supporting argo
-resource.data.then(data => console.log(data), err => console.error(err.stack));
-resource.follow('search', {query: '42'}).data.then(data => console.log(data));
-resource.follow('items').follow('create').post({foo: 'bar'}).then(resp => console.log(resp));
+resource.get().then(resource => console.log(resource), err => console.error(err.stack));
+resource.follow('search', {query: '42'}).getData().then(data => console.log(data));
+resource.follow('items').follow('create').post({foo: 'bar'}).then(res => console.log(res));
 ```
 
 See the [theseus-examples](https://github.com/argo-rest/theseus-examples) repository for live code.
@@ -34,5 +34,5 @@ Theseus is available as an ES6 module.
 Using [jspm](https://jspm.io/), you can install it by running:
 
 ```
-jspm install github:argo-rest/theseus
+jspm install theseus
 ```

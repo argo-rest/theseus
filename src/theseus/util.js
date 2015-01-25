@@ -6,6 +6,10 @@ export function isObject(obj) {
   return obj instanceof Object;
 }
 
+export function isString(value) {
+  return typeof value === 'string';
+}
+
 export function isDefined(value) {
   return typeof value !== 'undefined';
 }
@@ -43,4 +47,3 @@ export function defPropertyGetter(obj, propName, getter) {
 export function defPropertyLazyValue(obj, propName, computeVal) {
   defPropertyGetter(obj, propName, memoize(computeVal));
 }
-
