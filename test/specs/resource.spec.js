@@ -41,7 +41,9 @@ describe('Resource', () => {
                 response = {
                     uri: exampleUri,
                     status: 200,
-                    headers: {},
+                    headers: {
+                        'Content-Type': 'application/vnd.argo+json'
+                    },
                     body: {data: {testKey: 'testVal'}}
                 };
                 http.get = sinon.stub().
@@ -53,15 +55,15 @@ describe('Resource', () => {
                 resource.get.should.be.a('function');
             });
 
-            it('should return a Resource', () => {
-                var resp = resource.get();
-                resp.should.be.instanceof(Resource);
+            it('should return a Promise', () => {
+                var res = resource.get();
+                res.should.be.instanceof(Promise);
             });
 
             it('should GET the uri from the http adapter', () => {
-                var resp = resource.get();
+                var res = resource.get();
 
-                return resp.response.then(() => {
+                return res.then(() => {
                     // FIXME: once?
                     http.get.should.have.been.calledWith(exampleUri, {});
                 });
@@ -69,9 +71,9 @@ describe('Resource', () => {
 
             it('should pass any param to the http adapter', () => {
                 var params = {param1: 'val1', param2: 'val2'};
-                var resp = resource.get(params);
+                var res = resource.get(params);
 
-                return resp.response.then(() => {
+                return res.then(() => {
                    http.get.should.have.been.calledWith(exampleUri, params);
                 });
             });
@@ -80,22 +82,26 @@ describe('Resource', () => {
 
             it('should pass any implementation options to the http adapter', () => {
                 var implemOptions = {opt1: 'val1'};
-                var resp = resource.get({}, implemOptions);
+                var res = resource.get({}, implemOptions);
 
-                return resp.response.then(() => {
+                return res.then(() => {
                    http.get.should.have.been.calledWith(exampleUri, {}, implemOptions);
                 });
             });
 
             it('should return a Resource with the same uri', () => {
-                var resp = resource.get();
-                return resp.uri.should.eventually.equal(exampleUri);
+                var res = resource.get();
+                return res.then(gotResource => {
+                    gotResource.uri.should.equal(exampleUri);
+                });
             });
 
             it('should return a Resource with the data', () => {
                 var resp = resource.get();
                 // TODO: check only one GET
-                return resp.getData().should.eventually.deep.equal({testKey: 'testVal'});
+                return resp.then(gotResource => {
+                    gotResource.getData().should.eventually.deep.equal({testKey: 'testVal'});
+                });
             });
 
             // TODO: exposed data if argo
