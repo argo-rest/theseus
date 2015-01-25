@@ -1,6 +1,6 @@
 # Theseus [![Build Status](https://travis-ci.org/argo-rest/theseus.svg?branch=master)](https://travis-ci.org/argo-rest/theseus)
 
-A JavaScript client library for argo Hypermedia APIs.
+A JavaScript client library for [argo](https://github.com/argo-rest/spec) Hypermedia APIs.
 
 *Under development.*
 
@@ -34,5 +34,5 @@ Theseus is available as an ES6 module.
 Using [jspm](https://jspm.io/), you can install it by running:
 
 ```
-jspm install github:argo-rest/theseus
+jspm install theseus
 ```
