@@ -212,6 +212,14 @@ export class Resource {
         return link;
       });
   }
+
+  /**
+   * @return {Promise[String]}
+   */
+  getUri() {
+    return this.$uri;
+  }
+
 }
 
 
