@@ -119,7 +119,56 @@ describe('Resource', () => {
         // TODO: response
 
         // TODO: getData
-        // TODO: getLink, getLinks
+        // TODO: getLinks
+
+        describe('#getLink', function() {
+            var response;
+
+            beforeEach(() => {
+                response = {
+                    data: {testKey: 'testVal'},
+                    links: [
+                        {rel: 'testRel', href: 'http://example.com/path{?arg}'}
+                    ]
+                };
+
+                resource = new Resource(exampleUri, {
+                    // FIXME: pass in mock
+                    http: http,
+                    promise: Promise
+                }, response);
+            });
+
+            it('should be a function', () => {
+                resource.getLink.should.be.a('function');
+            });
+
+            it('should throw if called without a "rel" parameter', () => {
+                (() => {
+                    resource.getLink();
+                }).should.throw('Missing expected parameter rel');
+            });
+
+            it('should throw if called with non-string "rel" parameter', () => {
+                (() => {
+                    resource.getLink({});
+                }).should.throw('Parameter rel expected to be of type string');
+            });
+
+            it('should return a Promise fullfilled with the link', () => {
+                const linkPromise = resource.getLink('testRel');
+                linkPromise.should.be.instanceof(Promise);
+                return linkPromise.should.eventually.deep.equal({rel: 'testRel', href: 'http://example.com/path{?arg}'});
+            });
+
+            it('should return a Promise rejected with an error if no such link', () => {
+                const linkPromise = resource.getLink('missing');
+                linkPromise.should.be.instanceof(Promise);
+                return linkPromise.should.
+                    eventually.be.rejected.and.
+                    eventually.have.property('message', 'No link found for rel: missing');
+            });
+        });
 
     });
 });
