@@ -202,6 +202,8 @@ export class Resource {
    * @return {Promise[Link]}
    */
   getLink(rel) {
+    assertStringParam(rel, 'rel');
+
     return this.getLinks().
       then(links => links.find(l => l.rel == rel)).
       then(link => {
