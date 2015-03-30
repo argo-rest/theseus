@@ -205,11 +205,11 @@ export class Resource {
     return this.getLinks().
       then(links => links.find(l => l.rel == rel)).
       then(link => {
-        if (! link) {
-          throw new Error('No link found for rel: ' + rel);
+        if (link) {
+          return link;
+        } else {
+          return this.$adapters.promise.reject(new Error('No link found for rel: ' + rel));
         }
-        // FIXME: why do we have to return a value? see Promise/A+
-        return link;
       });
   }
 }
