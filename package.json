@@ -1,6 +1,6 @@
 {
   "name": "theseus",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "JavaScript client library for argo Hypermedia APIs",
   "keywords": [
     "hypermedia",
