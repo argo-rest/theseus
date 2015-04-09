@@ -23,11 +23,15 @@
       "lib": "src"
     },
     "dependencies": {
-      "uri-templates": "^0.1.5"
+      "uri-templates": "npm:uri-templates@^0.1.5"
+    },
+    "devDependencies": {
+      "traceur": "github:jmcriffey/bower-traceur@0.0.87",
+      "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.87"
     }
   },
   "devDependencies": {
-    "jspm": "^0.10.4",
+    "jspm": "~0.15.1",
     "karma": "^0.12.24",
     "karma-chai": "^0.1.0",
     "karma-chai-plugins": "^0.2.3",
