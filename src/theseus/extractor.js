@@ -6,7 +6,7 @@ function contains(arr, item) {
 }
 
 
-var baseEntityProperties = ['uri', 'data', 'links'];
+var baseEntityProperties = ['uri', 'data', 'links', 'actions'];
 var collectionEntityProperties = ['length', 'offset', 'total'];
 
 function allowedEntityProperties(entityIsCollection) {
