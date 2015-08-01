@@ -185,6 +185,14 @@ export class Resource {
     return this.$response.then(ensureEntity).then(resp => resp.links || []);
   }
 
+  /**
+   * @return {Promise[Array[Action]]}
+   */
+  getActions() {
+    // The response must be an entity
+    return this.$response.then(ensureEntity).then(resp => resp.actions || []);
+  }
+
 
   /* == Helpers == */
 
@@ -213,6 +221,16 @@ export class Resource {
           return this.$adapters.promise.reject(new Error('No link found for rel: ' + rel));
         }
       });
+  }
+
+  /**
+   * @return {Promise[Action]|undefined}
+   */
+  getAction(name) {
+    assertStringParam(name, 'name');
+
+    return this.getActions().
+      then(actions => actions.find(l => l.name == name));
   }
 
   /**
