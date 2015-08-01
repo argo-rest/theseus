@@ -207,6 +207,26 @@ export class Resource {
   }
 
   /**
+   * @return {Promise[Resource|Any]}
+   */
+  // TODO: allow passing params and body
+  perform(name) {
+    return this.getAction(name).then(action => {
+        const resource = new Resource(action.href, this.$adapters);
+        // TODO: generic http method invoke?
+        switch (action.method) {
+        case 'GET':    return resource.get();
+        case 'POST':   return resource.post();
+        case 'PUT':    return resource.put();
+        case 'PATCH':  return resource.patch();
+        case 'DELETE': return resource.delete();
+        default:
+            throw new Error('Cannot perform unsupported method: ' + action.method);
+        }
+    });
+  }
+
+  /**
    * @return {Promise[Link]}
    */
   getLink(rel) {

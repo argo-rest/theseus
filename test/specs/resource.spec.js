@@ -249,6 +249,94 @@ describe('Resource', () => {
             });
         });
 
+
+
+
+        describe('#perform', function() {
+            var responseGet, responseDelete;
+
+            beforeEach(() => {
+                var data = {
+                    data: {testKey: 'testVal'},
+                    actions: [{
+                        name: 'testActionGet',
+                        href: exampleUri,
+                        method: 'GET'
+                    }, {
+                        name: 'testActionDelete',
+                        href: exampleUri,
+                        method: 'DELETE'
+                    }]
+                };
+
+                resource = new Resource(exampleUri, {
+                    // FIXME: pass in mock
+                    http: http,
+                    promise: Promise
+                }, data);
+
+
+                responseGet = {
+                    uri: exampleUri,
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/vnd.argo+json'
+                    },
+                    body: {data: {testKey: 'testVal'}}
+                };
+                http.get = sinon.stub().
+                    returns(Promise.resolve(responseGet));
+
+                responseDelete = {
+                    uri: exampleUri,
+                    status: 204,
+                    headers: {}
+                };
+                http.delete = sinon.stub().
+                    returns(Promise.resolve(responseDelete));
+            });
+
+            it('should be a function', () => {
+                resource.perform.should.be.a('function');
+            });
+
+            it('should throw if called without a "name" parameter', () => {
+                (() => {
+                    resource.perform();
+                }).should.throw('Missing expected parameter name');
+            });
+
+            it('should throw if called with non-string "action" parameter', () => {
+                (() => {
+                    resource.perform({});
+                }).should.throw('Parameter name expected to be of type string');
+            });
+
+            it('should perform the corresponding HTTP call', () => {
+                const actionPromise = resource.perform('testActionGet');
+                actionPromise.should.be.instanceof(Promise);
+                return actionPromise.then(() => {
+                    http.get.should.have.been.calledWith(exampleUri, {});
+                });
+            });
+
+            it('should return a Promise of the corresponding response Resource', () => {
+                const actionPromise = resource.perform('testActionGet');
+                actionPromise.should.be.instanceof(Promise);
+                return actionPromise.then(respResource => {
+                    respResource.should.be.instanceof(Resource);
+                    respResource.getData().should.eventually.deep.equal({testKey: 'testVal'});
+                });
+            });
+
+            it('should return a Promise of undefined if the action results in an empty response', () => {
+                const actionPromise = resource.perform('testActionDelete');
+                actionPromise.should.be.instanceof(Promise);
+                return actionPromise.then(respResource => {
+                    expect(respResource).to.be.undefined;
+                });
+            });
+        });
     });
 
 
