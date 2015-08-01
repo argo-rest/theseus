@@ -181,7 +181,7 @@ describe('Resource', () => {
                 beforeEach(() => {
                     action = {
                         name: 'testAction',
-                        href: 'http://example.com/path',
+                        href: exampleUri,
                         method: 'GET'
                     };
                     response = {
