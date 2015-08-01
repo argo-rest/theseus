@@ -170,5 +170,86 @@ describe('Resource', () => {
             });
         });
 
+
+
+        describe('#getAction', function() {
+
+            describe('on resource with actions', function() {
+                var action;
+                var response;
+
+                beforeEach(() => {
+                    action = {
+                        name: 'testAction',
+                        href: 'http://example.com/path',
+                        method: 'GET'
+                    };
+                    response = {
+                        data: {testKey: 'testVal'},
+                        actions: [action]
+                    };
+
+                    resource = new Resource(exampleUri, {
+                        // FIXME: pass in mock
+                        http: http,
+                        promise: Promise
+                    }, response);
+                });
+
+                it('should be a function', () => {
+                    resource.getAction.should.be.a('function');
+                });
+
+                it('should throw if called without a "name" parameter', () => {
+                    (() => {
+                        resource.getAction();
+                    }).should.throw('Missing expected parameter name');
+                });
+
+                it('should throw if called with non-string "action" parameter', () => {
+                    (() => {
+                        resource.getAction({});
+                    }).should.throw('Parameter name expected to be of type string');
+                });
+
+                it('should return a Promise fullfilled with the action', () => {
+                    const actionPromise = resource.getAction('testAction');
+                    actionPromise.should.be.instanceof(Promise);
+                    return actionPromise.should.eventually.deep.equal(action);
+                });
+
+                it('should return a Promise fullfilled with undefined if no such action', () => {
+                    const actionPromise = resource.getAction('missing');
+                    actionPromise.should.be.instanceof(Promise);
+                    return actionPromise.should.eventually.be.undefined;
+                });
+            });
+
+
+            describe('on resource without actions', function() {
+                var response;
+
+                beforeEach(() => {
+                    response = {
+                        data: {testKey: 'testVal'}
+                    };
+
+                    resource = new Resource(exampleUri, {
+                        // FIXME: pass in mock
+                        http: http,
+                        promise: Promise
+                    }, response);
+                });
+
+                it('should return a Promise fullfilled with undefined', () => {
+                    const actionPromise = resource.getAction('someAction');
+                    actionPromise.should.be.instanceof(Promise);
+                    return actionPromise.should.eventually.be.undefined;
+                });
+            });
+        });
+
     });
+
+
 });
