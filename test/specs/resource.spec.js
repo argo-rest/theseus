@@ -112,7 +112,88 @@ describe('Resource', () => {
             // TODO: if error / 404
         });
 
-        // TODO: post, put, patch, delete
+
+        describe('#put', function() {
+            var response;
+
+            beforeEach(() => {
+                response = {
+                    uri: exampleUri,
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/vnd.argo+json'
+                    },
+                    body: {data: {testKey: 'newVal'}}
+                };
+                http.put = sinon.stub().
+                    // withArgs(exampleUri).
+                    returns(Promise.resolve(response));
+            });
+
+            it('should be a function', () => {
+                resource.put.should.be.a('function');
+            });
+
+            it('should return a Promise', () => {
+                var res = resource.put();
+                res.should.be.instanceof(Promise);
+            });
+
+            it('should PUT the uri from the http adapter', () => {
+                var res = resource.put();
+
+                return res.then(() => {
+                    // FIXME: once?
+                    http.put.should.have.been.calledWith(exampleUri, undefined);
+                });
+            });
+
+            it('should pass any data body to the http adapter', () => {
+                var data = {param1: 'val1', param2: 'val2'};
+                var res = resource.put(data);
+
+                return res.then(() => {
+                   http.put.should.have.been.calledWith(exampleUri, data);
+                });
+            });
+
+            // TODO: error if data is not an object/array? or wrap in {data: ...}?
+
+            it('should pass any implementation options to the http adapter', () => {
+                var implemOptions = {opt1: 'val1'};
+                var res = resource.put({}, implemOptions);
+
+                return res.then(() => {
+                   http.put.should.have.been.calledWith(exampleUri, {}, implemOptions);
+                });
+            });
+
+            it('should return a Resource with the same uri', () => {
+                var res = resource.put();
+                return res.then(gotResource => {
+                    gotResource.uri.should.equal(exampleUri);
+                });
+            });
+
+            it('should return a Resource with the data returned by the server', () => {
+                var resp = resource.put({testKey: 'newVal'});
+                // TODO: check only one PUT
+                return resp.then(gotResource => {
+                    gotResource.getUri().should.eventually.equal(exampleUri);
+                    gotResource.getData().should.eventually.deep.equal({testKey: 'newVal'});
+                });
+            });
+
+            // TODO: exposed data if argo
+            // TODO: exposed data if not argo
+            // TODO: argo without data
+            // TODO: not argo without data (204)
+
+            // TODO: if error / 404
+        });
+
+
+        // TODO: post, patch, delete
         // TODO: follow
 
         // TODO: properties: uri, data
