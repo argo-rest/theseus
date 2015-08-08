@@ -184,6 +184,24 @@ describe('Resource', () => {
                 });
             });
 
+            it('should return a Resource with the data if the response was empty (idempotent)', () => {
+                response = {
+                    uri: exampleUri,
+                    status: 204,
+                    headers: {}
+                };
+                http.put = sinon.stub().
+                    // withArgs(exampleUri, {testKey: 'newVal'}).
+                    returns(Promise.resolve(response));
+
+                var resp = resource.put({testKey: 'newVal'});
+                // TODO: check only one PUT
+                return resp.then(gotResource => {
+                    gotResource.getUri().should.eventually.equal(exampleUri);
+                    gotResource.getData().should.eventually.deep.equal({testKey: 'newVal'});
+                });
+            });
+
             // TODO: exposed data if argo
             // TODO: exposed data if not argo
             // TODO: argo without data

@@ -142,8 +142,15 @@ export class Resource {
   put(data, implemOptions = {}) {
     return this.$uri.
       then(uri => this.$adapters.http.put(uri, data, implemOptions)).
-      // FIXME: if empty, use sent data, else extractEntity on response data
-      then(parseResponse(this.$adapters));
+      then(resp => {
+          const {uri, body, headers, status} = resp;
+          // If empty response, use sent data as resource body
+          if (status === 204) {
+              return new Resource(uri, this.$adapters, {data});
+          } else {
+              return parseResponse(this.$adapters)(resp);
+          }
+      });
   }
 
   /**
