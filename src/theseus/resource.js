@@ -3,6 +3,7 @@ import {isString, isDefined, defPropertyValue, defPropertyLazyValue} from './uti
 import {assertStringParam, assertPromiseParam} from './util/asserts';
 
 import uriTemplates from 'uri-templates';
+import extend from 'extend';
 
 
 var CONTENT_TYPE_ARGO = 'application/vnd.argo+json';
@@ -36,6 +37,12 @@ function ensureEntity(response) {
   return response;
 }
 
+function asRejection(func, Promise) {
+  return (...args) => {
+    return Promise.reject(func(...args));
+  };
+}
+
 // FIXME: don't re-create a function every time
 function parseResponse(config) {
   return function({uri, body, headers}) {
@@ -44,6 +51,22 @@ function parseResponse(config) {
       return new Resource(resourceUri, config, extractEntity(body, config));
     } else {
       return body;
+    }
+  };
+}
+
+// FIXME: don't re-create a function every time
+function parseErrorResponse(config) {
+  return function(response) {
+    let {uri, body, headers} = response;
+    if (headers['Content-Type'] === CONTENT_TYPE_ARGO) {
+      var resourceUri = (typeof body === 'object' && body.uri) || headers['Location'] || uri;
+      // FIXME: extract error structure?
+      const extractErrorEntity = extractEntity
+      const parsedBody = new ErrorResource(resourceUri, config, extractErrorEntity(body, config));
+      return extend({}, response, {body: parsedBody});
+    } else {
+      return response;
     }
   };
 }
@@ -104,6 +127,8 @@ export class Resource {
             if (isDefined(response.length)) { defPropertyValue(this, 'length', response.length); }
             if (isDefined(response.total))  { defPropertyValue(this, 'total',  response.total);  }
           }
+
+          // TODO: if error?
         } else {
           defPropertyValue(this, 'data', response);
         }
@@ -124,7 +149,11 @@ export class Resource {
   get(params = {}, implemOptions = {}) {
     return this.$uri.
       then(uri => this.$adapters.http.get(uri, params, implemOptions)).
-      then(parseResponse(this.$adapters));
+      // then(parseResponse(this.$adapters));
+      then(
+          parseResponse(this.$adapters),
+          asRejection(parseErrorResponse(this.$adapters), this.$adapters.promise)
+      );
   }
 
   /**
@@ -221,9 +250,9 @@ export class Resource {
         case 'PATCH':  return resource.patch();
         case 'DELETE': return resource.delete();
         default:
-            throw new Error('Cannot perform unsupported method: ' + action.method);
+          throw new Error('Cannot perform unsupported method: ' + action.method);
         }
-    });
+      });
   }
 
   /**
@@ -260,6 +289,13 @@ export class Resource {
     return this.$uri;
   }
 
+}
+
+
+export class ErrorResource extends Resource {
+  getError() {
+    return this.$response.then(resp => resp.error);
+  }
 }
 
 

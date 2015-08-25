@@ -23,6 +23,7 @@
       "lib": "src"
     },
     "dependencies": {
+      "extend": "npm:extend@^3.0.0",
       "uri-templates": "npm:uri-templates@^0.1.5"
     },
     "devDependencies": {

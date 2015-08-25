@@ -1,4 +1,4 @@
-import {Resource} from '../../src/theseus/resource';
+import {Resource, ErrorResource} from '../../src/theseus/resource';
 
 describe('Resource', () => {
 
@@ -101,6 +101,54 @@ describe('Resource', () => {
                 // TODO: check only one GET
                 return resp.then(gotResource => {
                     gotResource.getData().should.eventually.deep.equal({testKey: 'testVal'});
+                });
+            });
+
+            it('should return an error response if the server returns a 4xx', () => {
+                response = {
+                    uri: exampleUri,
+                    status: 404,
+                    headers: {}
+                };
+                http.get = sinon.stub().
+                    returns(Promise.reject(response));
+
+                var resp = resource.get();
+                return resp.then(gotResource => {
+                    // TODO never called
+                }).catch(error => {
+                    // FIXME: what other expected fields?
+                    error.uri.should.equal(exampleUri);
+                    error.status.should.equal(404);
+                    error.headers.should.deep.equal({});
+                    expect(error.body).to.be.undefined;
+                });
+            });
+
+            it('should transform the body into a Resource in the error response if the server returns a 4xx with an argo error entity', () => {
+                response = {
+                    uri: exampleUri,
+                    status: 404,
+                    headers: {
+                        'Content-Type': 'application/vnd.argo+json'
+                    },
+                    body: {error: {name: 'testError', message: 'test error!'}}
+                };
+                http.get = sinon.stub().
+                    returns(Promise.reject(response));
+
+                var resp = resource.get();
+                // TODO: check only one GET
+                return resp.then(gotResource => {
+                    // TODO never called
+                    expect(false).to.equal(true)
+                }, error => {
+                    error.uri.should.equal(exampleUri);
+                    error.status.should.equal(404);
+                    error.headers.should.deep.equal({'Content-Type': 'application/vnd.argo+json'});
+                    error.body.should.be.instanceof(ErrorResource);
+                    error.body.getError().should.eventually.deep.equal({name: 'testError', message: 'test error!'});
+                    error.body.should.be.instanceof(Resource);
                 });
             });
 

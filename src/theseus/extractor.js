@@ -7,11 +7,13 @@ function contains(arr, item) {
 
 
 var baseEntityProperties = ['uri', 'data', 'links', 'actions'];
-var collectionEntityProperties = ['length', 'offset', 'total'];
+var collectionEntityProperties = ['length', 'offset', 'total'].concat(baseEntityProperties);
+// FIXME: or nested within error?
+var errorEntityProperties = ['error'].concat(baseEntityProperties);
 
 function allowedEntityProperties(entityIsCollection) {
   if (entityIsCollection) {
-    return baseEntityProperties.concat(collectionEntityProperties);
+    return collectionEntityProperties;
   } else {
     return baseEntityProperties;
   }
@@ -27,7 +29,6 @@ function isEntity(obj, isEmbedded) {
   if (isEmbedded) {
     hasRequiredProps = 'uri' in obj;
   } else {
-    // FIXME: required for response entities?
     hasRequiredProps = 'data' in obj;
   }
 
