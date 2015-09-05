@@ -27,7 +27,6 @@ function isEntity(obj, isEmbedded) {
   if (isEmbedded) {
     hasRequiredProps = 'uri' in obj;
   } else {
-    // FIXME: required for response entities?
     hasRequiredProps = 'data' in obj;
   }
 
@@ -44,12 +43,15 @@ function isEntity(obj, isEmbedded) {
 function parseResponse(response, isEmbedded, config) {
   if (isEmbedded) {
     if (response && isEntity(response, isEmbedded)) {
+      // FIXME: don't mutate please
       if (isDefined(response.data)) {
         response.data = parseData(response.data, config);
-        // FIXME: don't mutate please
+      } else {
+        // FIXME: hack to ensure Resource detects response as an
+        // entity in its constructor
+        response.data = undefined;
       }
 
-// FIXME: hack, pass in config
       return new Resource(response.uri, config, response);
     } else {
       return parseData(response, config);
