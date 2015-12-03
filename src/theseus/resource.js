@@ -209,16 +209,16 @@ export class Resource {
   /**
    * @return {Promise[Resource|Any]}
    */
-  // TODO: allow passing params and body
-  perform(name) {
+  // TODO: allow passing body
+  perform(name, data) {
     return this.getAction(name).then(action => {
         const resource = new Resource(action.href, this.$adapters);
         // TODO: generic http method invoke?
         switch (action.method) {
-        case 'GET':    return resource.get();
-        case 'POST':   return resource.post();
-        case 'PUT':    return resource.put();
-        case 'PATCH':  return resource.patch();
+        case 'GET':    return resource.get(data);
+        case 'POST':   return resource.post(data);
+        case 'PUT':    return resource.put(data);
+        case 'PATCH':  return resource.patch(data);
         case 'DELETE': return resource.delete();
         default:
             throw new Error('Cannot perform unsupported method: ' + action.method);
