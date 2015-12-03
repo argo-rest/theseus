@@ -210,15 +210,18 @@ export class Resource {
    * @return {Promise[Resource|Any]}
    */
   // TODO: allow passing body
-  perform(name, data) {
+  perform(name, parameters) {
     return this.getAction(name).then(action => {
         const resource = new Resource(action.href, this.$adapters);
         // TODO: generic http method invoke?
+        // HACK: we're hacking in the ability to pass in parameters
+        // to be able to move towards something similar to the swagger
+        // spec without breaking the clients of the API.
         switch (action.method) {
-        case 'GET':    return resource.get(data);
-        case 'POST':   return resource.post(data);
-        case 'PUT':    return resource.put(data);
-        case 'PATCH':  return resource.patch(data);
+        case 'GET':    return resource.get();
+        case 'POST':   return resource.post(parameters.body);
+        case 'PUT':    return resource.put(parameters.body);
+        case 'PATCH':  return resource.patch();
         case 'DELETE': return resource.delete();
         default:
             throw new Error('Cannot perform unsupported method: ' + action.method);
