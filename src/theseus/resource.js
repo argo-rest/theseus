@@ -209,8 +209,8 @@ export class Resource {
   /**
    * @return {Promise[Resource|Any]}
    */
-  // TODO: allow passing body
-  perform(name, parameters) {
+  // TODO: allow passing body and parameters
+  perform(name, parameters = {}) {
     return this.getAction(name).then(action => {
         const resource = new Resource(action.href, this.$adapters);
         // TODO: generic http method invoke?
