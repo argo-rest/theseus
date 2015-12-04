@@ -1,4 +1,5 @@
 System.config({
+  "transpiler": "traceur",
   "paths": {
     "*": "*.js",
     "theseus/*": "src/*.js",
@@ -9,8 +10,8 @@ System.config({
 
 System.config({
   "map": {
-    "traceur": "github:jmcriffey/bower-traceur@0.0.87",
-    "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.87",
+    "traceur": "github:jmcriffey/bower-traceur@0.0.88",
+    "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.88",
     "uri-templates": "npm:uri-templates@0.1.5",
     "github:jspm/nodelibs-path@0.1.0": {
       "path-browserify": "npm:path-browserify@0.0.0"
