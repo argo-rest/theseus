@@ -40,6 +40,7 @@
     "karma-jspm": "^1.1.2",
     "karma-mocha": "^0.1.9",
     "karma-sinon": "^1.0.3",
-    "karma-sinon-chai": "^0.2.0"
+    "karma-sinon-chai": "^0.2.0",
+    "mocha": "^2.3.4"
   }
 }
